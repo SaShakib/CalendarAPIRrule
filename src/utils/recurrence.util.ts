@@ -1,4 +1,4 @@
-import { RRule, rrulestr } from "rrule";
+import { RRule, rrulestr, Frequency, Weekday } from "rrule";
 import { DateTime } from "luxon";
 import { IEvent } from "../models/event.models";
 /**
@@ -6,15 +6,22 @@ import { IEvent } from "../models/event.models";
  * freq: 'DAILY'|'WEEKLY'|'MONTHLY'
  * dtstart should be a JS Date (UTC)
  */
+
+const freqMap = {
+  DAILY: RRule.DAILY,
+  WEEKLY: RRule.WEEKLY,
+  MONTHLY: RRule.MONTHLY,
+};
+
 export function buildRRuleString(params: {
   freq: "DAILY" | "WEEKLY" | "MONTHLY";
   dtstart: Date;
   interval?: number;
   until?: Date;
-  byweekday?: RRule.Weekday[];
+  byweekday?: Weekday[];
 }) {
   const rule = new RRule({
-    freq: RRule[params.freq],
+    freq: freqMap[params.freq],
     dtstart: params.dtstart,
     interval: params.interval ?? 1,
     until: params.until,
@@ -22,7 +29,6 @@ export function buildRRuleString(params: {
   });
   return rule.toString();
 }
-
 
 export function generateOccurrencesForEvent(
   event: IEvent,
