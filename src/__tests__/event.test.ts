@@ -72,7 +72,7 @@ describe("Hybrid Recurrence API", () => {
     expect(res.body.occurrences.length).toBeGreaterThan(1);
   });
 
-  it("creates an exception override for a single occurrence (thisEvent)", async () => {
+  it("Update a single occurrence (thisEvent)", async () => {
     // target the occurrence on 2025-08-19 (a date that would be part of weekly series)
     const occDate = "2025-08-19T09:00:00.000Z";
     const res = await request(app)
@@ -97,7 +97,7 @@ describe("Hybrid Recurrence API", () => {
     ).toBeTruthy();
   });
 
-  it("splits series with thisAndFollowing", async () => {
+  it("Update event with thisAndFollowing", async () => {
     const cut = "2025-09-02T09:00:00.000Z";
     const res = await request(app)
       .put(`/api/events/${masterId}?updateType=thisAndFollowing`)

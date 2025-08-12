@@ -1,0 +1,283 @@
+openapi: 3.0.3
+info:
+  title: Hybrid Recurrence API
+  description: API for managing recurring and single calendar events with complex recurrence rules and exceptions.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api
+    description: Local development server
+
+tags:
+  - name: Events
+    description: Event management endpoints
+
+components:
+  parameters:
+    EventIdParam:
+      name: eventId
+      in: path
+      description: Event unique identifier
+      required: true
+      schema:
+        type: string
+        example: "64ff9aa5e1c123456789abcd"
+    UpdateTypeQuery:
+      name: updateType
+      in: query
+      description: Type of update for recurrence events
+      required: true
+      schema:
+        type: string
+        enum: [thisEvent, thisAndFollowing, allEvents]
+    DeleteTypeQuery:
+      name: deleteType
+      in: query
+      description: Type of deletion for recurrence events
+      required: true
+      schema:
+        type: string
+        enum: [thisEvent, allEvents]
+    OccurrenceDateQuery:
+      name: occurrenceDate
+      in: query
+      description: Specific occurrence date to target for update or deletion (ISO 8601)
+      required: false
+      schema:
+        type: string
+        format: date-time
+        example: "2025-08-19T09:00:00.000Z"
+    DateRangeStart:
+      name: start
+      in: query
+      description: Start of date range (ISO 8601)
+      required: true
+      schema:
+        type: string
+        format: date-time
+        example: "2025-08-01T00:00:00Z"
+    DateRangeEnd:
+      name: end
+      in: query
+      description: End of date range (ISO 8601)
+      required: true
+      schema:
+        type: string
+        format: date-time
+        example: "2025-08-31T23:59:59Z"
+
+  schemas:
+    RecurrenceRule:
+      type: object
+      properties:
+        freq:
+          type: string
+          description: Frequency of recurrence
+          enum: [DAILY, WEEKLY, MONTHLY, YEARLY]
+          example: WEEKLY
+        interval:
+          type: integer
+          description: Interval between recurrences
+          example: 1
+        until:
+          type: string
+          format: date-time
+          description: Recurrence end date
+          example: "2025-09-30T10:00:00Z"
+      required:
+        - freq
+        - interval
+    EventBase:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Weekly Team Sync"
+        description:
+          type: string
+          example: "Weekly meeting"
+        startTime:
+          type: string
+          format: date-time
+          example: "2025-08-05T09:00:00"
+        endTime:
+          type: string
+          format: date-time
+          example: "2025-08-05T10:00:00"
+        timezone:
+          type: string
+          example: "Asia/Dhaka"
+        recurrence:
+          $ref: '#/components/schemas/RecurrenceRule'
+      required:
+        - title
+        - startTime
+        - endTime
+        - timezone
+    EventResponse:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          properties:
+            _id:
+              type: string
+              example: "64ff9aa5e1c123456789abcd"
+            recurrenceRule:
+              type: string
+              example: "FREQ=WEEKLY;INTERVAL=1;UNTIL=20250930T100000Z"
+            createdBy:
+              type: string
+              example: "user1"
+            exceptions:
+              type: array
+              items:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    format: date-time
+                  isDeleted:
+                    type: boolean
+                example:
+                  - date: "2025-08-19T09:00:00.000Z"
+                    isDeleted: false
+
+    OccurrenceResponse:
+      type: object
+      properties:
+        occurrences:
+          type: array
+          items:
+            type: object
+            properties:
+              eventId:
+                type: string
+                example: "64ff9aa5e1c123456789abcd"
+              title:
+                type: string
+                example: "Weekly Team Sync"
+              startTime:
+                type: string
+                format: date-time
+                example: "2025-08-05T09:00:00Z"
+              endTime:
+                type: string
+                format: date-time
+                example: "2025-08-05T10:00:00Z"
+              timezone:
+                type: string
+                example: "Asia/Dhaka"
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-user-id
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+
+  /events:
+    post:
+      tags:
+        - Events
+      summary: Create an event (recurring or single)
+      requestBody:
+        description: Event details including optional recurrence
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventBase'
+      responses:
+        '201':
+          description: Event created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+
+  /myevents:
+    get:
+      tags:
+        - Events
+      summary: Fetch user's event occurrences within a date range
+      parameters:
+        - $ref: '#/components/parameters/DateRangeStart'
+        - $ref: '#/components/parameters/DateRangeEnd'
+      responses:
+        '200':
+          description: List of event occurrences within date range
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OccurrenceResponse'
+        '401':
+          description: Unauthorized
+
+  /events/{eventId}:
+    put:
+      tags:
+        - Events
+      summary: Update an event or occurrence with recurrence options
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+        - $ref: '#/components/parameters/UpdateTypeQuery'
+      requestBody:
+        description: Fields to update; may include recurrence rule or exception override
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                occurrenceDate:
+                  type: string
+                  format: date-time
+                  description: Date of occurrence to override (required for `thisEvent` and `thisAndFollowing`)
+                  example: "2025-08-19T09:00:00.000Z"
+                title:
+                  type: string
+                startTime:
+                  type: string
+                  format: date-time
+                endTime:
+                  type: string
+                  format: date-time
+                timezone:
+                  type: string
+                recurrence:
+                  $ref: '#/components/schemas/RecurrenceRule'
+      responses:
+        '200':
+          description: Event updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+        '403':
+          description: Forbidden (non-owner or non-admin)
+        '404':
+          description: Event not found
+
+    delete:
+      tags:
+        - Events
+      summary: Delete an event or a single occurrence
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+        - $ref: '#/components/parameters/DeleteTypeQuery'
+        - $ref: '#/components/parameters/OccurrenceDateQuery'
+      responses:
+        '200':
+          description: Event or occurrence deleted successfully
+        '403':
+          description: Forbidden (non-owner or non-admin)
+        '404':
+          description: Event not found
+

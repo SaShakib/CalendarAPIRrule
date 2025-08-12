@@ -11,7 +11,7 @@
     "url": "git+https://github.com/SaShakib/CalendarAPIRrule.git"
   },
   "license": "ISC",
-  "author": "",
+  "author": "Shakib <shakib0401@gmail.com>",
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
@@ -26,13 +26,17 @@
     "luxon": "^3.7.1",
     "mongoose": "^8.17.1",
     "rrule": "^2.8.1",
-    "uuid": "^11.1.0"
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^11.1.0",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/jest": "^30.0.0",
     "@types/luxon": "^3.7.1",
     "@types/supertest": "^6.0.3",
+    "@types/swagger-ui-express": "^4.1.8",
+    "@types/yamljs": "^0.2.34",
     "jest": "^30.0.5",
     "nodemon": "^3.1.10",
     "supertest": "^7.1.4",
