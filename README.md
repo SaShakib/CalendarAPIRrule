@@ -1,6 +1,11 @@
 
 # Caledar Api 
 
+## Installing 
+```bash
+npm install
+```
+
 ## Running, Building, Development & Testing
 
 This project uses the following npm scripts defined in `package.json`:
@@ -15,7 +20,6 @@ This project uses the following npm scripts defined in `package.json`:
 ---
 
 
-# Hybrid Recurrence API - Jest Test Suite Documentation
 
 
 ## Test User Roles and Headers
@@ -138,10 +142,10 @@ Tests check role-based access control by using these headers in requests.
 3. Run the test command:
 
 ```bash
-npm test
+npm run test
 # or
 jest --runInBand
-
+```
 
 ## API Documentation with Swagger UI
 
@@ -155,10 +159,3 @@ This project serves interactive API documentation using **Swagger UI** integrate
 - Start by clicking Authorize and put user1 
 
 ---
-
-### Setup Steps
-
-1. **Install dependencies:**
-
-```bash
-npm install swagger-ui-express yamljs
