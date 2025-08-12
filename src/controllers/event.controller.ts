@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { EventService } from "../services/event.service";
+import * as EventService from "../services/event.service";
 import { DateTime } from "luxon";
 
-export class EventController {
-  public static async create(req: Request, res: Response, next: NextFunction) {
+  export const create = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const created = await EventService.createEvent({
         ...req.body,
@@ -15,7 +14,7 @@ export class EventController {
     }
   }
 
-  public static async getMine(req: Request, res: Response, next: NextFunction) {
+  export const getMine = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { start, end } = req.query;
       const rangeStart = start
@@ -35,7 +34,7 @@ export class EventController {
     }
   }
 
-  public static async update(req: Request, res: Response, next: NextFunction) {
+  export const update = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const eventId = req.params.eventId;
       const updateType = (req.query.updateType as any) || "thisEvent";
@@ -55,7 +54,7 @@ export class EventController {
     }
   }
 
-  public static async delete(req: Request, res: Response, next: NextFunction) {
+  export const deleteEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const eventId = req.params.eventId;
       const deleteType = (req.query.deleteType as any) || "thisEvent";
@@ -72,4 +71,4 @@ export class EventController {
       next(err);
     }
   }
-}
+

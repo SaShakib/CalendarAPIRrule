@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { EventController } from "../controllers/event.controller";
+import * as EventController from "../controllers/event.controller";
 import { mockAuth } from "../middlewares/auth.middleware";
 
 const router = Router();
@@ -18,6 +18,6 @@ router.get("/myevents", EventController.getMine);
 router.put("/events/:eventId", EventController.update);
 
 // delete
-router.delete("/events/:eventId", EventController.delete);
+router.delete("/events/:eventId", EventController.deleteEvent);
 
 export default router;
