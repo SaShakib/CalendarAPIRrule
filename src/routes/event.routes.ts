@@ -1,9 +1,23 @@
-import express from "express";
-import * as eventController from "../controllers/event.controller";
+import { Router } from "express";
+import { EventController } from "../controllers/event.controller";
 import { mockAuth } from "../middlewares/auth.middleware";
 
-const router = express.Router();
+const router = Router();
 
-router.post("/", mockAuth, eventController.createEvent);
+// All routes need auth
+router.use(mockAuth);
+
+// create
+router.post("/events", EventController.create);
+
+// get my occurrences
+router.get("/myevents", EventController.getMine);
+
+// update (query param updateType = thisEvent|thisAndFollowing|allEvents)
+// occurrenceDate can be passed in body or query for specificity
+router.put("/events/:eventId", EventController.update);
+
+// delete
+router.delete("/events/:eventId", EventController.delete);
 
 export default router;
