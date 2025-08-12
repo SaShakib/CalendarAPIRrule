@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Hybrid Recurrence API
+  title: calendar with Recurrence API
   description: API for managing recurring and single calendar events with complex recurrence rules and exceptions.
   version: 1.0.0
 servers:
@@ -40,7 +40,7 @@ components:
     OccurrenceDateQuery:
       name: occurrenceDate
       in: query
-      description: Specific occurrence date to target for update or deletion (ISO 8601)
+      description: Specific occurrence date to target for update or deletion
       required: false
       schema:
         type: string
@@ -49,7 +49,7 @@ components:
     DateRangeStart:
       name: start
       in: query
-      description: Start of date range (ISO 8601)
+      description: Start of date range
       required: true
       schema:
         type: string
@@ -58,7 +58,7 @@ components:
     DateRangeEnd:
       name: end
       in: query
-      description: End of date range (ISO 8601)
+      description: End of date range
       required: true
       schema:
         type: string
@@ -206,7 +206,7 @@ paths:
     get:
       tags:
         - Events
-      summary: Fetch user's event occurrences within a date range
+      summary: Get My event occurrences within a date range
       parameters:
         - $ref: '#/components/parameters/DateRangeStart'
         - $ref: '#/components/parameters/DateRangeEnd'
