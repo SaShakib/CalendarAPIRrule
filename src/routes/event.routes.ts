@@ -14,7 +14,6 @@ router.post("/events", EventController.create);
 router.get("/myevents", EventController.getMine);
 
 // update (query param updateType = thisEvent|thisAndFollowing|allEvents)
-// occurrenceDate can be passed in body or query for specificity
 router.put("/events/:eventId", EventController.update);
 
 // delete

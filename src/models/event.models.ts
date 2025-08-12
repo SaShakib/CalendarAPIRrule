@@ -1,21 +1,21 @@
 import { Schema, model, Document, Types } from "mongoose";
 
 export interface IException {
-  date: Date; // date/time of occurrence being overridden/deleted
-  isDeleted?: boolean; // if true, occurrence is deleted
-  override?: Record<string, any>; // fields to override for this instance (title, startTime, etc.)
+  date: Date;
+  isDeleted?: boolean;
+  override?: Record<string, any>;
 }
 
 export interface IEvent extends Document {
   title: string;
   description?: string;
-  startTime: Date; // base start (dtstart)
+  startTime: Date;
   endTime: Date;
-  timezone: string; // IANA string
-  recurrenceRule?: string; // rrule string for series (optional)
-  seriesId?: string; // unique id for series (same across master events)
-  exceptions: IException[]; // list of exceptions (deleted or overrides)
-  createdBy: string; // userId
+  timezone: string;
+  recurrenceRule?: string;
+  seriesId?: string;
+  exceptions: IException[];
+  createdBy: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -37,7 +37,7 @@ const EventSchema = new Schema<IEvent>(
     endTime: { type: Date, required: true },
     timezone: { type: String, required: true },
     recurrenceRule: { type: String },
-    seriesId: { type: String }, // can be generated when creating recurring series
+    seriesId: { type: String },
     exceptions: { type: [ExceptionSchema], default: [] },
     createdBy: { type: String, required: true },
   },

@@ -45,7 +45,6 @@ export const createEvent = async (payload: {
       until: recurrence.until
         ? parseToUTC(recurrence.until, timezone)
         : undefined,
-      // byweekday could be converted; keep simple for now
     });
   }
 
@@ -64,8 +63,6 @@ export const createEvent = async (payload: {
   return doc;
 };
 
-// get occurrences for a user (their created events or where they are participant if you implement participants)
-// For simplicity, returns occurrences for a date range
 export const getOccurrencesForUser = async (opts: {
   userId: string;
   rangeStart: Date;
@@ -75,18 +72,16 @@ export const getOccurrencesForUser = async (opts: {
 }) => {
   const { userId, rangeStart, rangeEnd } = opts;
 
-  // fetch series that could intersect range — very simple query: recurrenceRule exists OR startTime in range
   const masters = await EventModel.find({
     createdBy: userId,
   }).lean();
 
-  // generate occurrences per event and merge
   const allOccurrences: any[] = [];
   for (const m of masters) {
-    const ev = await EventModel.findById(m._id); // get full doc to have methods and exceptions
+    const ev = await EventModel.findById(m._id);
     if (!ev) continue;
     const occ = generateOccurrencesForEvent(ev as any, rangeStart, rangeEnd);
-    // enrich with basic metadata
+
     occ.forEach((o) => {
       o.title = ev.title;
       o.description = ev.description;
@@ -109,9 +104,9 @@ export const getOccurrencesForUser = async (opts: {
 // - allEvents: update master (if series), or single event
 export const updateEvent = async (params: {
   actorId: string;
-  eventId: string; // could be master or single event
+  eventId: string;
   updateType: "thisEvent" | "thisAndFollowing" | "allEvents";
-  occurrenceDate?: string; // ISO date for the targeted occurrence (required for thisEvent & thisAndFollowing)
+  occurrenceDate?: string;
   payload: Partial<{
     title: string;
     description: string;
@@ -131,18 +126,16 @@ export const updateEvent = async (params: {
 
   // ALL EVENTS: update main/master
   if (updateType === "allEvents") {
-    // apply simple updates
     if (payload.title) event.title = payload.title;
     if (payload.description) event.description = payload.description;
     if (payload.startTime && payload.timezone) {
       event.startTime = parseToUTC(payload.startTime, payload.timezone);
     } else if (payload.startTime) {
-      // assume same timezone
       event.startTime = new Date(payload.startTime);
     }
     if (payload.endTime && payload.timezone)
       event.endTime = parseToUTC(payload.endTime, payload.timezone);
-    // recurrence replacement if provided
+
     if (payload.recurrence && payload.timezone) {
       event.recurrenceRule = buildRRuleString({
         freq: payload.recurrence.freq,
@@ -165,15 +158,13 @@ export const updateEvent = async (params: {
     if (!occurrenceDate)
       throw { status: 400, message: "occurrenceDate required for thisEvent" };
     const targetDateISO = new Date(occurrenceDate).toISOString();
-    // If payload is empty and we want deletion, the client can set { delete: true } — but we'll interpret override
-    // If payload has a marker "deleteOccurrence": true -> mark isDeleted
+
     if ((payload as any).deleteOccurrence) {
       event.exceptions.push({
         date: new Date(targetDateISO),
         isDeleted: true,
       });
     } else {
-      // create override object with provided fields
       const override: any = {};
       if (payload.title) override.title = payload.title;
       if (payload.description) override.description = payload.description;
@@ -194,7 +185,6 @@ export const updateEvent = async (params: {
         message: "occurrenceDate required for thisAndFollowing",
       };
     if (!event.recurrenceRule) {
-      // not a series — treat as allEvents
       return updateEvent({
         actorId: params.actorId,
         eventId,
@@ -203,10 +193,8 @@ export const updateEvent = async (params: {
       });
     }
 
-    const cutDate = new Date(occurrenceDate); // this occurrence and following should be modified
-    // 1) Adjust current event's recurrence to end before cutDate
-    // We'll parse current rule and set until = cutDate - 1ms
-    const { RRule, rrulestr } = await import("rrule"); // dynamic import for types
+    const cutDate = new Date(occurrenceDate);
+    const { RRule, rrulestr } = await import("rrule");
     const rule = rrulestr(event.recurrenceRule, { forceset: false }) as any;
     const opts = rule.options;
     const untilDate = new Date(cutDate.getTime() - 1);
@@ -215,7 +203,6 @@ export const updateEvent = async (params: {
     event.recurrenceRule = oldRule.toString();
     await event.save();
 
-    // 2) Create new series starting from cutDate with payload (if recurrence provided use that else copy old settings)
     const newSeriesId = event.seriesId || uuidv4();
     const newStart = payload.startTime
       ? parseToUTC(payload.startTime, payload.timezone || event.timezone)
@@ -241,8 +228,6 @@ export const updateEvent = async (params: {
           : undefined,
       });
     } else {
-      // reuse old frequency but set dtstart newStart (this is simplistic — ideally extract freq/interval from old rule)
-      // For now, copy event.recurrenceRule options but adjust dtstart.
       const { rrulestr } = await import("rrule");
       const oldParsed = rrulestr((event as any).recurrenceRule, {
         forceset: false,
@@ -286,7 +271,6 @@ export const deleteEvent = async (params: {
   if (!event) throw { status: 404, message: "Event not found" };
 
   if (deleteType === "allEvents") {
-    // delete master and any potential other masters with same seriesId
     if (event.seriesId) {
       await EventModel.deleteMany({ seriesId: event.seriesId });
     } else {
@@ -310,11 +294,9 @@ export const deleteEvent = async (params: {
     if (!occurrenceDate)
       throw { status: 400, message: "occurrenceDate required" };
     if (!event.recurrenceRule) {
-      // single event -> delete it
       await event.deleteOne();
       return { message: "Event deleted" };
     }
-    // set current series until before occurrenceDate
     const cutDate = new Date(occurrenceDate);
     const { rrulestr, RRule } = await import("rrule");
     const rule = rrulestr(event.recurrenceRule, { forceset: false }) as any;
@@ -322,7 +304,6 @@ export const deleteEvent = async (params: {
     const untilDate = new Date(cutDate.getTime() - 1);
     const newRule = new RRule({ ...opts, until: untilDate });
     event.recurrenceRule = newRule.toString();
-    // remove exceptions that fall on/after cutDate
     event.exceptions = (event.exceptions || []).filter((e) => e.date < cutDate);
     await event.save();
     return {

@@ -1,11 +1,6 @@
-import { RRule, rrulestr, Frequency, Weekday } from "rrule";
+import { RRule, rrulestr, Weekday } from "rrule";
 import { DateTime } from "luxon";
 import { IEvent } from "../models/event.models";
-/**
- * Build rrule string from params
- * freq: 'DAILY'|'WEEKLY'|'MONTHLY'
- * dtstart should be a JS Date (UTC)
- */
 
 const freqMap = {
   DAILY: RRule.DAILY,
@@ -35,11 +30,11 @@ export function generateOccurrencesForEvent(
   rangeStart: Date,
   rangeEnd: Date
 ) {
-  // If non-recurring and single occurrence, return that if in range (and not deleted)
+  // If non-recurring and single occurrence
   if (!event.recurrenceRule) {
     const st = event.startTime;
     if (st >= rangeStart && st <= rangeEnd) {
-      // check exceptions for single-event (rare) — if deleted, skip
+      // check exceptions for single-event = if deleted, skip
       const ex = event.exceptions?.find((e) => +e.date === +st);
       if (ex?.isDeleted) return [];
       if (ex?.override) {
@@ -60,12 +55,10 @@ export function generateOccurrencesForEvent(
   }
 
   // Recurring
-  // rrulestr requires dtstart embedded in rule or passed as options; rrulestr can parse stored rule and produce RRule
+
   const rule = rrulestr(event.recurrenceRule, { forceset: false }) as RRule;
-  // ensure we query in UTC range (dates are JS Dates in UTC)
   const dates = rule.between(rangeStart, rangeEnd, true);
 
-  // map exceptions by ISO string (using event timezone local representation for exact matching)
   const exMap = new Map<string, any>();
   for (const ex of event.exceptions || []) {
     exMap.set(new Date(ex.date).toISOString(), ex);
@@ -79,7 +72,6 @@ export function generateOccurrencesForEvent(
     if (ex?.isDeleted) return acc; // skip deleted occurrence
 
     if (ex?.override) {
-      // apply override values; override.startTime/endTime may be provided as ISO
       const start = ex.override.startTime
         ? new Date(ex.override.startTime)
         : occ;

@@ -40,7 +40,7 @@ import { DateTime } from "luxon";
       const updateType = (req.query.updateType as any) || "thisEvent";
       const occurrenceDate =
         req.body.occurrenceDate || req.query.occurrenceDate;
-      // permissions should be checked by caller middleware or controller wrapper; simplified here
+
       const updated = await EventService.updateEvent({
         actorId: req.userId!,
         eventId,
