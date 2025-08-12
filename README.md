@@ -109,28 +109,27 @@ Tests check role-based access control by using these headers in requests.
 
 ---
 
-## Test Run Summary
 
- PASS  src/__tests__/event.test.ts (5.784 s)
-  Hybrid Recurrence API
-    √ creates a weekly recurring event (107 ms)
-    √ creates a single (non-recurring) event (9 ms)
-    √ fetches my events in a date range (25 ms)
-    √ generates occurrences in a range (12 ms)
-    √ creates an exception override for a single occurrence (thisEvent) (20 ms)
-    √ splits series with thisAndFollowing (67 ms)
-    √ Update a single occurrence (thisEvent) for Non user and Non adming Should return forbidden (14 ms)
-    √ Update event with thisAndFollowing using Non User and Non Admin should Return Forbidden (8 ms)
-    √ deletes a single occurrence (thisEvent) (16 ms)
-    √ admin can delete entire series (12 ms)
-    √ prevents non-owner, non-admin from deleting (7 ms)
-    √ returns 404 for invalid eventId (5 ms)
 
-Test Suites: 1 passed, 1 total  
-Tests:       12 passed, 12 total
-Snapshots:   0 total
-Time:        6.584 s
-Ran all test suites.
+## ✅ Test Run Summary
+
+- ✅ creates a weekly recurring event (107 ms)  
+- ✅ creates a single (non-recurring) event (9 ms)  
+- ✅ fetches my events in a date range (25 ms)  
+- ✅ generates occurrences in a range (12 ms)  
+- ✅ creates an exception override for a single occurrence (`thisEvent`) (20 ms)  
+- ✅ splits series with `thisAndFollowing` (67 ms)  
+- ✅ Update a single occurrence (`thisEvent`) for Non-user and Non-admin should return forbidden (14 ms)  
+- ✅ Update event with `thisAndFollowing` using Non-user and Non-admin should return forbidden (8 ms)  
+- ✅ deletes a single occurrence (`thisEvent`) (16 ms)  
+- ✅ admin can delete entire series (12 ms)  
+- ✅ prevents non-owner, non-admin from deleting (7 ms)  
+- ✅ returns 404 for invalid eventId (5 ms)  
+
+**Test Suites:** 1 passed, 1 total  
+**Tests:** 12 passed, 12 total  
+**Snapshots:** 0 total  
+**Time:** 6.584 s  
 
 ## Running the Tests
 
