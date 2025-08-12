@@ -35,15 +35,15 @@ export function generateOccurrencesForEvent(
     const st = event.startTime;
     if (st >= rangeStart && st <= rangeEnd) {
       // check exceptions for single-event = if deleted, skip
-      const ex = event.exceptions?.find((e) => +e.date === +st);
-      if (ex?.isDeleted) return [];
-      if (ex?.override) {
+      const exception = event.exceptions?.find((e) => +e.date === +st);
+      if (exception?.isDeleted) return [];
+      if (exception?.override) {
         return [
           {
-            startTime: new Date(ex.override.startTime || st),
-            endTime: new Date(ex.override.endTime || event.endTime),
+            startTime: new Date(exception.override.startTime || st),
+            endTime: new Date(exception.override.endTime || event.endTime),
             originalEventId: event._id,
-            override: ex.override,
+            override: exception.override,
           },
         ];
       }

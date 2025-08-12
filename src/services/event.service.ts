@@ -67,8 +67,7 @@ export const getOccurrencesForUser = async (opts: {
   userId: string;
   rangeStart: Date;
   rangeEnd: Date;
-  page?: number;
-  limit?: number;
+
 }) => {
   const { userId, rangeStart, rangeEnd } = opts;
 
@@ -78,18 +77,18 @@ export const getOccurrencesForUser = async (opts: {
 
   const allOccurrences: any[] = [];
   for (const m of masters) {
-    const ev = await EventModel.findById(m._id);
-    if (!ev) continue;
-    const occ = generateOccurrencesForEvent(ev as any, rangeStart, rangeEnd);
+    const event = await EventModel.findById(m._id);
+    if (!event) continue;
+    const occurrences = generateOccurrencesForEvent(event as any, rangeStart, rangeEnd);
 
-    occ.forEach((o) => {
-      o.title = ev.title;
-      o.description = ev.description;
-      o.timezone = ev.timezone;
-      o.seriesId = ev.seriesId;
-      o.masterId = ev._id;
+    occurrences.forEach((occurrence) => {
+      occurrence.title = event.title;
+      occurrence.description = event.description;
+      occurrence.timezone = event.timezone;
+      occurrence.seriesId = event.seriesId;
+      occurrence.eventId = event._id;
     });
-    allOccurrences.push(...occ);
+    allOccurrences.push(...occurrences);
   }
 
   // sort by startTime

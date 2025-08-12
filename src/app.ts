@@ -4,10 +4,11 @@ import { errorHandler } from "./middlewares/error.middleware";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 import path from "path";
-
+import cors from "cors";
 
 const app = express();
 app.use(express.json());
+app.use(cors()); // Enable CORS for all routes and origins during development
 
 const swaggerDocument = YAML.load(path.join(__dirname, "../swagger.yaml"));
 

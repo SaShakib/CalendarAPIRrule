@@ -4,7 +4,7 @@ info:
   description: API for managing recurring and single calendar events with complex recurrence rules and exceptions.
   version: 1.0.0
 servers:
-  - url: http://localhost:3000/api
+  - url: http://localhost:5000/api
     description: Local development server
 
 tags:
