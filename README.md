@@ -157,5 +157,3 @@ This project serves interactive API documentation using **Swagger UI** integrate
 - We use `swagger-ui-express` and `yamljs` packages to serve the docs at `/docs` endpoint.
 - This lets anyone visiting `http://localhost:3000/docs` explore and test API endpoints interactively.
 - Start by clicking Authorize and put user1 
-
----
