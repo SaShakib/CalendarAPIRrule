@@ -142,3 +142,24 @@ Ran all test suites.
 npm test
 # or
 jest --runInBand
+
+
+## API Documentation with Swagger UI
+
+This project serves interactive API documentation using **Swagger UI** integrated directly into the Express server.
+
+### How It Works
+
+- The OpenAPI spec is written in `swagger.yaml`.
+- We use `swagger-ui-express` and `yamljs` packages to serve the docs at `/docs` endpoint.
+- This lets anyone visiting `http://localhost:3000/docs` explore and test API endpoints interactively.
+- Start by clicking Authorize and put user1 
+
+---
+
+### Setup Steps
+
+1. **Install dependencies:**
+
+```bash
+npm install swagger-ui-express yamljs
