@@ -69,7 +69,7 @@ export function generateOccurrencesForEvent(
   const occurrences = dates.reduce<any[]>((acc, occ) => {
     const iso = occ.toISOString();
     const ex = exMap.get(iso);
-    if (ex?.isDeleted) return acc; // skip deleted occurrence
+    if (ex?.isDeleted) return acc;
 
     if (ex?.override) {
       const start = ex.override.startTime
