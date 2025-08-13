@@ -7,7 +7,7 @@ A **robust Calendar API** built with **Express.js**, **TypeScript**, and **Mongo
 - `thisAndFollowing` → modify/delete the selected occurrence and all future occurrences  
 - `allEvents` → modify/delete the entire series  
 
----
+
 
 ## Features
 
@@ -17,7 +17,7 @@ A **robust Calendar API** built with **Express.js**, **TypeScript**, and **Mongo
 - **Flexible exceptions**: mark single occurrences as deleted or override properties for specific occurrences  
 - **CRUD operations** for events with precise recurrence handling  
 
----
+
 
 ## Tech Stack
 
@@ -29,7 +29,7 @@ A **robust Calendar API** built with **Express.js**, **TypeScript**, and **Mongo
 - **Swagger** – interactive API documentation and testing  
 - **ESLint** – enforcing code quality and consistency  
 
----
+
 
 ## Key Highlights
 
@@ -40,7 +40,7 @@ A **robust Calendar API** built with **Express.js**, **TypeScript**, and **Mongo
 - **Flexible update/delete** – supports granular operations on recurring events (`thisEvent`, `thisAndFollowing`, `allEvents`)  
 - **Type-safe and maintainable** – every layer is typed with TypeScript and validated with Zod  
 
----
+
 
 
 ## Installing 
@@ -62,7 +62,7 @@ This project uses the following npm scripts defined in `package.json`:
 | `npm run dev` | `nodemon --watch src --exec ts-node src/server.ts` | Runs the server in development mode with automatic reload on source changes using `nodemon` and `ts-node`. |
 | `npm test`  | `jest --verbose --runInBand`    | Runs the Jest test suite with detailed output and runs tests sequentially (recommended for MongoDB stability). |
 
----
+
 
 ```bash
 npm run dev // run the Project in dev mode
@@ -84,7 +84,6 @@ npm run test // jest
 
 Tests check role-based access control by using these headers in requests.
 
----
 
 ## Test Cases Breakdown
 
@@ -164,8 +163,6 @@ Tests check role-based access control by using these headers in requests.
 
 - **Assertions**:
   - Status 404 Not Found
-
----
 
 
 
