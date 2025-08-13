@@ -1,4 +1,4 @@
-import { EventModel, IEvent } from "../models/event.models";
+import { EventModel, IEvent, IParticipant } from "../models/event.models";
 import {
   buildRRuleString,
   generateOccurrencesForEvent,
@@ -18,6 +18,7 @@ export const createEvent = async (payload: {
     until?: string;
     byweekday?: string[];
   };
+  participants?: { userId: string }[];
   createdBy: string;
 }): Promise<IEvent> => {
   const {
@@ -27,6 +28,7 @@ export const createEvent = async (payload: {
     endTime,
     timezone,
     recurrence,
+    participants = [],
     createdBy,
   } = payload;
   const startUTC = parseToUTC(startTime, timezone);
@@ -54,6 +56,7 @@ export const createEvent = async (payload: {
     endTime: endUTC,
     timezone,
     recurrenceRule,
+    participants,
     seriesId,
     createdBy,
   });
@@ -88,6 +91,7 @@ export const getOccurrencesForUser = async (opts: {
       occurrence.description = event.description;
       occurrence.timezone = event.timezone;
       occurrence.seriesId = event.seriesId;
+      occurrence.participants = event.participants;
       occurrence.eventId = event._id;
     });
     allOccurrences.push(...occurrences);
@@ -119,6 +123,7 @@ export const updateEvent = async (params: {
       interval?: number;
       until?: string;
     };
+    participants?: string[];
   }>;
 }): Promise<any> => {
   const { eventId, updateType, occurrenceDate, payload } = params;
@@ -150,6 +155,10 @@ export const updateEvent = async (params: {
           : undefined,
       });
     }
+
+   if (payload.participants) {
+     event.participants = payload.participants.map((p) => ({ userId: p }));
+   }
     await event.save();
     return event;
   }
@@ -172,6 +181,8 @@ export const updateEvent = async (params: {
       if (payload.startTime) override.startTime = payload.startTime;
       if (payload.endTime) override.endTime = payload.endTime;
       if (payload.timezone) override.timezone = payload.timezone;
+      if (payload.participants) override.participants = payload.participants;
+
       event.exceptions.push({ date: new Date(targetDateISO), override });
     }
     await event.save();
@@ -246,6 +257,7 @@ export const updateEvent = async (params: {
       endTime: newEnd,
       timezone: payload.timezone || event.timezone,
       recurrenceRule: newRecurrenceRule,
+      participants: payload.participants || event.participants,
       seriesId: newSeriesId,
       createdBy: event.createdBy,
     });

@@ -1,5 +1,10 @@
 import { Schema, model, Document } from "mongoose";
 
+export interface IParticipant {
+  userId: string;
+}
+
+
 export interface IException {
   date: Date;
   isDeleted?: boolean;
@@ -15,10 +20,19 @@ export interface IEvent extends Document {
   recurrenceRule?: string;
   seriesId?: string;
   exceptions: IException[];
+  participants: IParticipant[];
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
 }
+
+const ParticipantSchema = new Schema<IParticipant>(
+  {
+    userId: { type: String, required: true },
+  },
+  { _id: false }
+);
+
 
 const ExceptionSchema = new Schema<IException>(
   {
@@ -38,6 +52,7 @@ const EventSchema = new Schema<IEvent>(
     timezone: { type: String, required: true },
     recurrenceRule: { type: String },
     seriesId: { type: String },
+    participants: { type: [ParticipantSchema], default: [] },
     exceptions: { type: [ExceptionSchema], default: [] },
     createdBy: { type: String, required: true },
   },

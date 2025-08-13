@@ -66,6 +66,14 @@ components:
         example: "2025-08-31T23:59:59Z"
 
   schemas:
+    Participant:
+      type: object
+      properties:
+        userId:
+          type: string
+          example: "user1"
+      required:
+        - userId
     RecurrenceRule:
       type: object
       properties:
@@ -108,6 +116,10 @@ components:
           example: "Asia/Dhaka"
         recurrence:
           $ref: '#/components/schemas/RecurrenceRule'
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Participant'
       required:
         - title
         - startTime
@@ -166,6 +178,11 @@ components:
               timezone:
                 type: string
                 example: "Asia/Dhaka"
+              participants:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participant'
+
 
   securitySchemes:
     ApiKeyAuth:
@@ -197,6 +214,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EventResponse'
+                example:
+                  _id: "64ff9aa5e1c123456789abcd"
+                  title: "Weekly Team Sync"
+                  description: "Weekly meeting"
+                  startTime: "2025-08-05T09:00:00Z"
+                  endTime: "2025-08-05T10:00:00Z"
+                  timezone: "Asia/Dhaka"
+                  recurrenceRule: "FREQ=WEEKLY;INTERVAL=1;UNTIL=20250930T100000Z"
+                  createdBy: "user1"
+                  participants:
+                    - userId: "user1"
+                    - userId: "user2"
+                  exceptions: []
         '400':
           description: Validation error
         '401':
@@ -253,6 +283,11 @@ paths:
                   type: string
                 recurrence:
                   $ref: '#/components/schemas/RecurrenceRule'
+                participants:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Participant'
+
       responses:
         '200':
           description: Event updated successfully
@@ -260,6 +295,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EventResponse'
+                example:
+                  _id: "64ff9aa5e1c123456789abcd"
+                  title: "Weekly Team Sync Updated"
+                  description: "Updated meeting"
+                  startTime: "2025-08-05T09:00:00Z"
+                  endTime: "2025-08-05T10:00:00Z"
+                  timezone: "Asia/Dhaka"
+                  recurrenceRule: "FREQ=WEEKLY;INTERVAL=1;UNTIL=20250930T100000Z"
+                  createdBy: "user1"
+                  participants:
+                    - userId: "user1"
+                    - userId: "user2"
+                  exceptions: []
         '403':
           description: Forbidden (non-owner or non-admin)
         '404':
