@@ -153,9 +153,9 @@ Tests check role-based access control by using these headers in requests.
 - ✅ returns 400 if required occurrenceDate missing for thisEvent delete (17 ms)
 
 **Test Suites:** 1 passed, 1 total  
-**Tests:** 12 passed, 12 total  
+**Tests:** 15 passed, 15 total  
 **Snapshots:** 0 total  
-**Time:** 6.584 s  
+**Time:** 9.35 s  
 
 ## Running the Tests
 

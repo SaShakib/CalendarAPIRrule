@@ -29,18 +29,45 @@ export const createEventSchema = z.object({
   recurrence: recurrenceSchema.optional(),
 });
 
-export const updateEventSchema = z.object({
-  updateType: z.enum(["thisEvent", "thisAndFollowing", "allEvents"]),
-  occurrenceDate: dateStringSchema.optional(),
-  title: z.string().optional(),
-  description: z.string().optional(),
-  startTime: dateStringSchema.optional(),
-  endTime: dateStringSchema.optional(),
-  timezone: z.string().optional(),
-  recurrence: recurrenceSchema.optional(),
-});
+export const updateEventSchema = z
+  .object({
+    updateType: z.enum(["thisEvent", "thisAndFollowing", "allEvents"]),
+    occurrenceDate: dateStringSchema.optional(),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    startTime: dateStringSchema.optional(),
+    endTime: dateStringSchema.optional(),
+    timezone: z.string().optional(),
+    recurrence: recurrenceSchema.optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.updateType === "thisEvent") {
+        return !!data.occurrenceDate;
+      }
+      return true;
+    },
+    {
+      message: "occurrenceDate is required when updateType is 'thisEvent'",
+      path: ["occurrenceDate"],
+    }
+  );
 
-export const deleteEventSchema = z.object({
-  deleteType: z.enum(["thisEvent", "thisAndFollowing", "allEvents"]),
-  occurrenceDate: dateStringSchema.optional(),
-});
+export const deleteEventSchema = z
+  .object({
+    deleteType: z.enum(["thisEvent", "thisAndFollowing", "allEvents"]),
+    occurrenceDate: dateStringSchema.optional(),
+  })
+  .refine(
+    (data) => {
+      // If deleteType is 'thisEvent', occurrenceDate must exist
+      if (data.deleteType === "thisEvent") {
+        return !!data.occurrenceDate;
+      }
+      return true;
+    },
+    {
+      message: "occurrenceDate is required when deleteType is 'thisEvent'",
+      path: ["occurrenceDate"],
+    }
+  );
