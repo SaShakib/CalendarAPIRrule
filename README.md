@@ -1,27 +1,54 @@
 
 # Caledar Api 
 
-This is a Calendar API built with Express.js, TypeScript, and MongoDB (Mongoose), supporting recurring events (daily, weekly, monthly) with flexible update and delete options (thisEvent, thisAndFollowing, allEvents).
+A **robust Calendar API** built with **Express.js**, **TypeScript**, and **MongoDB (Mongoose)**. This API supports **recurring events** (daily, weekly, monthly) with **flexible update and delete options**:
 
-The project uses:
+- `thisEvent` → modify or delete only a single occurrence  
+- `thisAndFollowing` → modify/delete the selected occurrence and all future occurrences  
+- `allEvents` → modify/delete the entire series  
 
-- Jest – for unit and integration testing
+---
 
-- Zod – for schema-based request validation
+## Features
 
-- Swagger – for API documentation and testing
+- **Recurring events** powered by [**rrule**](https://www.npmjs.com/package/rrule) for accurate and flexible recurrence patterns  
+- **Timezone-safe**: all events respect the specified timezones  
+- **SOLID principles** applied throughout the codebase for maintainable and scalable architecture  
+- **Flexible exceptions**: mark single occurrences as deleted or override properties for specific occurrences  
+- **CRUD operations** for events with precise recurrence handling  
 
-- Express.js – for building RESTful APIs
+---
 
-- Mongoose – for MongoDB ODM
+## Tech Stack
 
-- TypeScript – for type safety and maintainability
+- **Express.js** – building RESTful APIs  
+- **TypeScript** – static typing and maintainable code  
+- **MongoDB + Mongoose** – schema-based ODM for data modeling  
+- **Zod** – request schema validation for safe and reliable endpoints  
+- **Jest** – unit and integration testing  
+- **Swagger** – interactive API documentation and testing  
+- **ESLint** – enforcing code quality and consistency  
 
-- ESLint  – for code quality and linting
+---
+
+## Key Highlights
+
+- **SOLID architecture** – designed for scalability and testability  
+- **Timezone awareness** – all events and recurrences handle user-specified timezones correctly  
+- **Advanced recurrence handling** – daily, weekly, monthly, or custom patterns using `rrule`  
+- **Exception handling** – allows skipping or overriding specific occurrences in a series  
+- **Flexible update/delete** – supports granular operations on recurring events (`thisEvent`, `thisAndFollowing`, `allEvents`)  
+- **Type-safe and maintainable** – every layer is typed with TypeScript and validated with Zod  
+
+---
+
 
 ## Installing 
 ```bash
+git clone https://github.com/yourusername/calendar-api.git
+cd calendar-api
 npm install
+
 ```
 
 ## Running, Building, Development & Testing
@@ -37,7 +64,16 @@ This project uses the following npm scripts defined in `package.json`:
 
 ---
 
+```bash
+npm run dev // run the Project in dev mode
 
+// run test
+npm run test // jest 
+
+```
+
+## Swagger Documentation 
+/docs - swagger documents more in below
 
 
 ## Test User Roles and Headers
