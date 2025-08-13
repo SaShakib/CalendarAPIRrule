@@ -3,6 +3,7 @@ import * as EventService from "../services/event.service";
 import { DateTime } from "luxon";
 import { EventModel } from "../models/event.models";
 import { canModifyEvent } from "../middlewares/auth.middleware";
+import { updateEventSchema } from "../validators/event.validator";
 
 export const create = async (
   req: Request,
@@ -61,6 +62,15 @@ export const update = async (
 
     if (!canModifyEvent(req, event.createdBy)) {
       return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const parsed = updateEventSchema.safeParse({
+      ...req.body,
+      updateType,
+      occurrenceDate,
+    });
+    if (!parsed.success) {
+      return res.status(400).json({ error: parsed.error.format() });
     }
 
     const updated = await EventService.updateEvent({

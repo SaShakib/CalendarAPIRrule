@@ -1,22 +1,35 @@
 import { Router } from "express";
 import * as EventController from "../controllers/event.controller";
 import { mockAuth } from "../middlewares/auth.middleware";
+import { validate } from "../middlewares/validate.middleware";
+import {
+  objectIdSchema,
+  createEventSchema,
+  updateEventSchema,
+  deleteEventSchema,
+} from "../validators/event.validator";
+import { z } from "zod";
+
 
 const router = Router();
 
-// All routes need auth
 router.use(mockAuth);
 
-// create
-router.post("/events", EventController.create);
+router.post("/events", validate(createEventSchema), EventController.create);
 
-// get my occurrences
 router.get("/myevents", EventController.getMine);
 
-// update (query param updateType = thisEvent|thisAndFollowing|allEvents)
-router.put("/events/:eventId", EventController.update);
+router.put(
+  "/events/:eventId",
+  validate(z.object({ eventId: objectIdSchema }), "params"),
+  EventController.update
+);
 
-// delete
-router.delete("/events/:eventId", EventController.deleteEvent);
+router.delete(
+  "/events/:eventId",
+  validate(z.object({ eventId: objectIdSchema }), "params"),
+  validate(deleteEventSchema, "query"),
+  EventController.deleteEvent
+);
 
 export default router;
