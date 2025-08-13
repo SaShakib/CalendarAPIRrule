@@ -5,6 +5,7 @@ import {
 } from "../utils/recurrence.util";
 import { parseToUTC } from "../utils/timezone.util";
 import { v4 as uuidv4 } from "uuid";
+import { RRule, rrulestr } from "rrule";
 
 export const createEvent = async (payload: {
   title: string;
@@ -208,7 +209,6 @@ export const updateEvent = async (params: {
     }
 
     const cutDate = new Date(occurrenceDate);
-    const { RRule, rrulestr } = await import("rrule");
     const rule = rrulestr(event.recurrenceRule, { forceset: false }) as any;
     const opts = rule.options;
     const untilDate = new Date(cutDate.getTime() - 1);
