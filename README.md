@@ -1,6 +1,23 @@
 
 # Caledar Api 
-This Project is meant for Calendar Api with Recurrence Ability with Daily, Weekly and Monthly recurrence Options. 
+
+This is a Calendar API built with Express.js, TypeScript, and MongoDB (Mongoose), supporting recurring events (daily, weekly, monthly) with flexible update and delete options (thisEvent, thisAndFollowing, allEvents).
+
+The project uses:
+
+- Jest – for unit and integration testing
+
+- Zod – for schema-based request validation
+
+- Swagger – for API documentation and testing
+
+- Express.js – for building RESTful APIs
+
+- Mongoose – for MongoDB ODM
+
+- TypeScript – for type safety and maintainability
+
+- ESLint (coming soon) – for code quality and linting
 
 ## Installing 
 ```bash
