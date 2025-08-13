@@ -17,7 +17,7 @@ The project uses:
 
 - TypeScript – for type safety and maintainability
 
-- ESLint (coming soon) – for code quality and linting
+- ESLint  – for code quality and linting
 
 ## Installing 
 ```bash
