@@ -5,7 +5,6 @@ import {
 } from "../utils/recurrence.util";
 import { parseToUTC } from "../utils/timezone.util";
 import { v4 as uuidv4 } from "uuid";
-import mongoose from "mongoose";
 
 export const createEvent = async (payload: {
   title: string;
@@ -67,7 +66,6 @@ export const getOccurrencesForUser = async (opts: {
   userId: string;
   rangeStart: Date;
   rangeEnd: Date;
-
 }) => {
   const { userId, rangeStart, rangeEnd } = opts;
 
@@ -79,7 +77,11 @@ export const getOccurrencesForUser = async (opts: {
   for (const m of masters) {
     const event = await EventModel.findById(m._id);
     if (!event) continue;
-    const occurrences = generateOccurrencesForEvent(event as any, rangeStart, rangeEnd);
+    const occurrences = generateOccurrencesForEvent(
+      event as any,
+      rangeStart,
+      rangeEnd
+    );
 
     occurrences.forEach((occurrence) => {
       occurrence.title = event.title;

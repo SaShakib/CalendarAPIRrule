@@ -1,5 +1,4 @@
 import { RRule, rrulestr, Weekday } from "rrule";
-import { DateTime } from "luxon";
 import { IEvent } from "../models/event.models";
 
 const freqMap = {

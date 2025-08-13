@@ -5,6 +5,18 @@ import { EventModel } from "../models/event.models";
 import { canModifyEvent } from "../middlewares/auth.middleware";
 import { updateEventSchema } from "../validators/event.validator";
 
+enum DeleteType {
+  thisEvent = "thisEvent",
+  thisAndFollowing = "thisAndFollowing",
+  allEvents = "allEvents",
+}
+
+enum UpdateType {
+  thisEvent = "thisEvent",
+  thisAndFollowing = "thisAndFollowing",
+  allEvents = "allEvents",
+}
+
 export const create = async (
   req: Request,
   res: Response,
@@ -52,7 +64,7 @@ export const update = async (
 ) => {
   try {
     const eventId = req.params.eventId;
-    const updateType = (req.query.updateType as any) || "thisEvent";
+    const updateType = (req.query.updateType as UpdateType) || UpdateType.thisEvent;
     const occurrenceDate = req.body.occurrenceDate || req.query.occurrenceDate;
 
     const event = await EventModel.findById(eventId);
@@ -93,7 +105,8 @@ export const deleteEvent = async (
 ) => {
   try {
     const eventId = req.params.eventId;
-    const deleteType = (req.query.deleteType as any) || "thisEvent";
+    const deleteType =
+      (req.query.deleteType as DeleteType) || DeleteType.thisEvent;
     const occurrenceDate = (req.query.occurrenceDate as string) || undefined;
     const event = await EventModel.findById(eventId);
     if (!event) {

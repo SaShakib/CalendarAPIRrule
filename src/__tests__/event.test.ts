@@ -15,8 +15,6 @@ afterAll(async () => {
 
 describe("Calendar Recurrence API", () => {
   let masterId: string;
-  let recurringId: string | undefined = "";
-  let singleId: string;
 
   const headers = { "x-user-id": "user1", "x-user-admin": "false" };
   const otherHeaders = { "x-user-id": "user2", "x-user-admin": "false" };
@@ -52,7 +50,6 @@ describe("Calendar Recurrence API", () => {
       timezone: "Asia/Dhaka",
     });
     expect(res.status).toBe(201);
-    singleId = res.body._id;
   });
 
   it("fetches my events in a date range", async () => {
@@ -223,8 +220,7 @@ describe("Calendar Recurrence API", () => {
     expect(res.status).toBe(404);
   });
 
-
-  // From here is Zod validation tests 
+  // From here is Zod validation tests
   it("returns 400 for invalid eventId format on delete", async () => {
     const res = await request(app)
       .delete(`/api/events/not-a-valid-id?deleteType=allEvents`)
@@ -260,5 +256,4 @@ describe("Calendar Recurrence API", () => {
       .set(headers);
     expect(res.status).toBe(400);
   });
-
 });

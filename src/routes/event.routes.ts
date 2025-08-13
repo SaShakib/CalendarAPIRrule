@@ -5,7 +5,6 @@ import { validate } from "../middlewares/validate.middleware";
 import {
   objectIdSchema,
   createEventSchema,
-  updateEventSchema,
   deleteEventSchema,
 } from "../validators/event.validator";
 import { z } from "zod";

@@ -17,11 +17,9 @@ export function canModifyEvent(req: Request, eventCreatedBy: string) {
   return !!(req.isAdmin || req.userId === eventCreatedBy);
 }
 
-declare global {
-  namespace Express {
-    interface Request {
-      userId?: string;
-      isAdmin?: boolean;
-    }
+declare module "express" {
+  interface Request {
+    userId?: string;
+    isAdmin?: boolean;
   }
 }
