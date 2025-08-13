@@ -13,7 +13,7 @@ afterAll(async () => {
   await mongoose.disconnect();
 });
 
-describe("Hybrid Recurrence API", () => {
+describe("Calendar Recurrence API", () => {
   let masterId: string;
   let recurringId: string | undefined = "";
   let singleId: string;
@@ -222,4 +222,43 @@ describe("Hybrid Recurrence API", () => {
       .set(adminHeaders);
     expect(res.status).toBe(404);
   });
+
+
+  // From here is Zod validation tests 
+  it("returns 400 for invalid eventId format on delete", async () => {
+    const res = await request(app)
+      .delete(`/api/events/not-a-valid-id?deleteType=allEvents`)
+      .set(adminHeaders);
+    expect(res.status).toBe(400);
+  });
+
+  it("returns 400 for invalid eventId format on update", async () => {
+    const res = await request(app)
+      .put(
+        `/api/events/not-a-valid-id?updateType=thisEvent&occurrenceDate=2025-08-19T09:00:00Z`
+      )
+      .set(headers)
+      .send({
+        title: "Invalid test",
+        startTime: "2025-08-19T11:00:00",
+        endTime: "2025-08-19T12:00:00",
+        timezone: "Asia/Dhaka",
+      });
+    expect(res.status).toBe(400);
+  });
+
+  it("returns 400 if required occurrenceDate missing for thisEvent delete", async () => {
+    const event = await EventModel.create({
+      title: "Test Event",
+      startTime: new Date(),
+      endTime: new Date(),
+      timezone: "Asia/Dhaka",
+      createdBy: "user1",
+    });
+    const res = await request(app)
+      .delete(`/api/events/${event._id}?deleteType=thisEvent`)
+      .set(headers);
+    expect(res.status).toBe(400);
+  });
+
 });

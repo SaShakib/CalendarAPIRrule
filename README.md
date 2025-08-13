@@ -1,5 +1,6 @@
 
 # Caledar Api 
+This Project is meant for Calendar Api with Recurrence Ability with Daily, Weekly and Monthly recurrence Options. 
 
 ## Installing 
 ```bash
@@ -129,6 +130,10 @@ Tests check role-based access control by using these headers in requests.
 - ✅ admin can delete entire series (12 ms)  
 - ✅ prevents non-owner, non-admin from deleting (7 ms)  
 - ✅ returns 404 for invalid eventId (5 ms)  
+- ✅ returns 404 for invalid eventId (4 ms)
+- ✅ returns 400 for invalid eventId format on delete (4 ms)
+- ✅ returns 400 for invalid eventId format on update (4 ms)
+- ✅ returns 400 if required occurrenceDate missing for thisEvent delete (17 ms)
 
 **Test Suites:** 1 passed, 1 total  
 **Tests:** 12 passed, 12 total  
