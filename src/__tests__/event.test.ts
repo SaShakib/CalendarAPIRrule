@@ -335,7 +335,7 @@ describe("Calendar Recurrence API", () => {
       participants: ["user2", "user3", "user5"],
     };
 
-    const res = await request(app)
+    await request(app)
       .put(`/api/events/${event._id}?updateType=thisEvent`)
       .set(headers)
       .send(payload)
@@ -357,48 +357,48 @@ describe("Calendar Recurrence API", () => {
     ]);
   });
 
-it("should split the series and update participants for thisAndFollowing", async () => {
-  const originalEvent = await EventModel.create({
-    title: "Weekly Team Sync",
-    description: "Team meeting",
-    startTime: new Date("2025-08-20T09:00:00Z"),
-    endTime: new Date("2025-08-20T10:00:00Z"),
-    timezone: "Asia/Dhaka",
-    createdBy: "user1",
-    recurrenceRule: "FREQ=WEEKLY;DTSTART=20250820T090000Z", // Simplified rule
-    participants: [{ userId: "user2" }],
-    seriesId: "series-123",
+  it("should split the series and update participants for thisAndFollowing", async () => {
+    const originalEvent = await EventModel.create({
+      title: "Weekly Team Sync",
+      description: "Team meeting",
+      startTime: new Date("2025-08-20T09:00:00Z"),
+      endTime: new Date("2025-08-20T10:00:00Z"),
+      timezone: "Asia/Dhaka",
+      createdBy: "user1",
+      recurrenceRule: "FREQ=WEEKLY;DTSTART=20250820T090000Z", // Simplified rule
+      participants: [{ userId: "user2" }],
+      seriesId: "series-123",
+    });
+
+    const occurrenceDate = "2025-08-27T09:00:00Z"; // The date where split will occur
+    const payload = {
+      occurrenceDate,
+      participants: ["user2", "user4"], // new participants
+    };
+
+    const res = await request(app)
+      .put(`/api/events/${originalEvent._id}?updateType=thisAndFollowing`)
+      .set(headers)
+      .send(payload)
+      .expect(200);
+
+    expect(res.body).toHaveProperty("_id");
+    expect(res.body.seriesId).toBe(originalEvent.seriesId); // Should share same seriesId or newly assigned depending on your logic
+    expect(res.body.participants).toEqual([
+      { userId: "user2" },
+      { userId: "user4" },
+    ]);
+
+    const updatedOriginal = await EventModel.findById(originalEvent._id).lean();
+    expect(updatedOriginal?.participants).toEqual([{ userId: "user2" }]);
+    expect(updatedOriginal?.recurrenceRule).toContain("UNTIL="); // Ensures it was cut
+
+    const newSeries = await EventModel.findOne({
+      _id: res.body._id,
+    }).lean();
+    expect(newSeries?.participants).toEqual([
+      { userId: "user2" },
+      { userId: "user4" },
+    ]);
   });
-
-  const occurrenceDate = "2025-08-27T09:00:00Z"; // The date where split will occur
-  const payload = {
-    occurrenceDate,
-    participants: ["user2", "user4"], // new participants
-  };
-
-  const res = await request(app)
-    .put(`/api/events/${originalEvent._id}?updateType=thisAndFollowing`)
-    .set(headers)
-    .send(payload)
-    .expect(200);
-
-  expect(res.body).toHaveProperty("_id");
-  expect(res.body.seriesId).toBe(originalEvent.seriesId); // Should share same seriesId or newly assigned depending on your logic
-  expect(res.body.participants).toEqual([
-    { userId: "user2" },
-    { userId: "user4" },
-  ]);
-
-  const updatedOriginal = await EventModel.findById(originalEvent._id).lean();
-  expect(updatedOriginal?.participants).toEqual([{ userId: "user2" }]);
-  expect(updatedOriginal?.recurrenceRule).toContain("UNTIL="); // Ensures it was cut
-
-  const newSeries = await EventModel.findOne({
-    _id: res.body._id,
-  }).lean();
-  expect(newSeries?.participants).toEqual([
-    { userId: "user2" },
-    { userId: "user4" },
-  ]);
-});
 });

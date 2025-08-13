@@ -1,4 +1,4 @@
-import { EventModel, IEvent, IParticipant } from "../models/event.models";
+import { EventModel, IEvent } from "../models/event.models";
 import {
   buildRRuleString,
   generateOccurrencesForEvent,
@@ -56,7 +56,7 @@ export const createEvent = async (payload: {
     endTime: endUTC,
     timezone,
     recurrenceRule,
-    participants: (payload.participants || []).map((userId) => ({ userId })),
+    participants: (participants || []).map((userId) => ({ userId })),
     seriesId,
     createdBy,
   });
