@@ -66,14 +66,6 @@ components:
         example: "2025-08-31T23:59:59Z"
 
   schemas:
-    Participant:
-      type: object
-      properties:
-        userId:
-          type: string
-          example: "user1"
-      required:
-        - userId
     RecurrenceRule:
       type: object
       properties:
@@ -119,7 +111,8 @@ components:
         participants:
           type: array
           items:
-            $ref: '#/components/schemas/Participant'
+            type: string
+            example: "user1"
       required:
         - title
         - startTime
@@ -181,7 +174,8 @@ components:
               participants:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Participant'
+                  type: string
+                  example: "user1"
 
 
   securitySchemes:
@@ -224,8 +218,10 @@ paths:
                   recurrenceRule: "FREQ=WEEKLY;INTERVAL=1;UNTIL=20250930T100000Z"
                   createdBy: "user1"
                   participants:
-                    - userId: "user1"
-                    - userId: "user2"
+                    type: array
+                    items:
+                      type: string
+                      example: "user1"
                   exceptions: []
         '400':
           description: Validation error
@@ -286,7 +282,9 @@ paths:
                 participants:
                   type: array
                   items:
-                    $ref: '#/components/schemas/Participant'
+                    type: string
+                    example: "user1"
+
 
       responses:
         '200':
@@ -305,8 +303,10 @@ paths:
                   recurrenceRule: "FREQ=WEEKLY;INTERVAL=1;UNTIL=20250930T100000Z"
                   createdBy: "user1"
                   participants:
-                    - userId: "user1"
-                    - userId: "user2"
+                    type: array
+                    items:
+                      type: string
+                      example: "user1"
                   exceptions: []
         '403':
           description: Forbidden (non-owner or non-admin)

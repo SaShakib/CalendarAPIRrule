@@ -56,7 +56,7 @@ export const createEvent = async (payload: {
     endTime: endUTC,
     timezone,
     recurrenceRule,
-    participants,
+    participants: (payload.participants || []).map((userId) => ({ userId })),
     seriesId,
     createdBy,
   });
@@ -74,14 +74,12 @@ export const getOccurrencesForUser = async (opts: {
 
   const masters = await EventModel.find({
     createdBy: userId,
-  }).lean();
+  });
 
   const allOccurrences: any[] = [];
-  for (const m of masters) {
-    const event = await EventModel.findById(m._id);
-    if (!event) continue;
+  for (const event of masters) {
     const occurrences = generateOccurrencesForEvent(
-      event as any,
+      event,
       rangeStart,
       rangeEnd
     );
@@ -94,6 +92,7 @@ export const getOccurrencesForUser = async (opts: {
       occurrence.participants = event.participants;
       occurrence.eventId = event._id;
     });
+
     allOccurrences.push(...occurrences);
   }
 
@@ -156,9 +155,9 @@ export const updateEvent = async (params: {
       });
     }
 
-   if (payload.participants) {
-     event.participants = payload.participants.map((p) => ({ userId: p }));
-   }
+    if (payload.participants) {
+      event.participants = payload.participants.map((p) => ({ userId: p }));
+    }
     await event.save();
     return event;
   }
@@ -181,7 +180,10 @@ export const updateEvent = async (params: {
       if (payload.startTime) override.startTime = payload.startTime;
       if (payload.endTime) override.endTime = payload.endTime;
       if (payload.timezone) override.timezone = payload.timezone;
-      if (payload.participants) override.participants = payload.participants;
+      if (payload.participants)
+        override.participants = payload.participants.map((u: string) => ({
+          userId: u,
+        }));
 
       event.exceptions.push({ date: new Date(targetDateISO), override });
     }
@@ -257,7 +259,9 @@ export const updateEvent = async (params: {
       endTime: newEnd,
       timezone: payload.timezone || event.timezone,
       recurrenceRule: newRecurrenceRule,
-      participants: payload.participants || event.participants,
+      participants: payload.participants
+        ? payload.participants.map((u: string) => ({ userId: u }))
+        : event.participants || [],
       seriesId: newSeriesId,
       createdBy: event.createdBy,
     });

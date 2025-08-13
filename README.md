@@ -184,11 +184,15 @@ Tests check role-based access control by using these headers in requests.
 - ✅ returns 400 for invalid eventId format on delete (4 ms)
 - ✅ returns 400 for invalid eventId format on update (4 ms)
 - ✅ returns 400 if required occurrenceDate missing for thisEvent delete (17 ms)
+- ✅ should create an event with participants (8 ms)
+- ✅ should update participants of an existing event (10 ms)
+- ✅ should update participants for a single occurrence (thisEvent) (12 ms)
+- ✅ should split the series and update participants for thisAndFollowing (19 ms)
 
 **Test Suites:** 1 passed, 1 total  
-**Tests:** 15 passed, 15 total  
+**Tests:** 19 passed, 19 total  
 **Snapshots:** 0 total  
-**Time:** 9.35 s  
+**Time:** 5.415 s  
 
 ## Running the Tests
 
