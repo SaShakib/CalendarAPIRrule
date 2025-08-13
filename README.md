@@ -45,8 +45,8 @@ A **robust Calendar API** built with **Express.js**, **TypeScript**, and **Mongo
 
 ## Installing 
 ```bash
-git clone https://github.com/yourusername/calendar-api.git
-cd calendar-api
+git clone https://github.com/SaShakib/CalendarAPI.git
+cd CalendarAPI
 npm install
 
 ```
